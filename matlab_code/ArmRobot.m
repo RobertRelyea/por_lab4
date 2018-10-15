@@ -216,11 +216,12 @@ classdef ArmRobot < handle
             %
             % @params degrees - the desired degree(s) to set.
             %         joints  - respective joint number(s) for degree(s).
-                        
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % FINISH IMPLEMENTING THIS FUNCTION            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            values = obj.deg2val(degrees, joints);
+			obj.moveJoints(values, joints);
+			degrees = obj.val2deg(obj.getServoValues(), joints);
+            
         end
+        
         
         function obj = moveRelative(obj,degrees,joints)
             % Moves the specified servo(s) to the desired degree(s) with 
@@ -230,9 +231,9 @@ classdef ArmRobot < handle
             %         joints  - respective joint number(s for degree(s).
             
             
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % FINISH IMPLEMENTING THIS FUNCTION            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            current_degrees = obj.val2deg(obj.getServoValues(), joints);
+			goal_degrees = degrees + current_degrees
+			obj.moveAbsolute(goal_degrees, joints);
 
         end
         
@@ -312,34 +313,62 @@ classdef ArmRobot < handle
             display('UtT');obj.UtT            
         end       
         
-    end
-    
-    methods(Static)
         
-        function value = deg2val(degree,joints)
+        function values = deg2val(obj, degrees, joints)
             % Converts degree(s) values into servo value(s) for the specified
             % joints.
             %
             % @params degree - degree(s) to be converted
             %         joints - respectful joint numbers
+                    
             
-            value = 0.*degree;
-            
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % FINISH IMPLEMENTING THIS FUNCTION            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
-            
+            values = [];
+            % Iterate through all the values
+            max_degrees = [90 75 55 90 100 90];
+            %min_degrees = [0 0 0 0 0 0];
+            min_degrees = [-110 -175 -50 -100 -95 -90];
+            for i = 1:length(degrees)
+                if (degrees(i) >= 0 && degrees(i) <= max_degrees(i))
+                    servoMin = obj.servoCenters(i);
+                    servoMax = obj.servoMax(i);
+                    degreeMin = min_degrees(i);
+                    degreeMax = max_degrees(i);
+                    values(i) = mapfun(degrees(i), 0, degreeMax, servoMin, servoMax);
+                elseif (degrees(i) < 0 && degrees(i) >= min_degrees(i))
+                    servoMin = obj.servoMin(i);
+                    servoMax = obj.servoCenters(i);
+                    degreeMin = min_degrees(i);
+                    degreeMax = max_degrees(i);
+                    values(i) = mapfun(degrees(i), degreeMin, 0, servoMin, servoMax);
+                end
+            end
         end
         
-        function degree = val2deg(val,joints)
+        function degrees = val2deg(obj, values, joints)
             % Converts servo values(s) values into degree(s)for the specified
             % joints.
             %
             % @params val - servo value(s) to be converted
             %         joints - respectful joint numbers
-            degree = 0.*val;
+            degrees = [];
+            % Iterate through all the values
+            max_degrees = [90 75 55 90 100 90];
+            min_degrees = [-110 -175 -50 -100 -95 -90];
+            for i = 1:length(values)
+                if (values(i) >= obj.servoCenters(i) && values(i) <= obj.servoMax(i))
+                    servoMin = obj.servoCenters(i);
+                    servoMax = obj.servoMax(i);
+                    degreeMin = min_degrees(i);
+                    degreeMax = max_degrees(i);
+                    degrees(i) = mapfun(values(i), servoMin, servoMax, 0, degreeMax);
+                elseif (values(i) < obj.servoCenters(i) && values(i) >= obj.servoMin(i))
+                    servoMin = obj.servoMin(i);
+                    servoMax = obj.servoCenters(i);
+                    degreeMin = min_degrees(i);
+                    degreeMax = max_degrees(i);
+                    degrees(i) = mapfun(values(i), servoMin, servoMax, degreeMin, 0);
+                end
+            end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % FINISH IMPLEMENTING THIS FUNCTION            
