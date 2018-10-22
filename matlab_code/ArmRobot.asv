@@ -250,10 +250,9 @@ classdef ArmRobot < handle
             %         joints  - respective joint number(s for degree(s).
             %         nStep   - the number of steps in linear motion. 
             
-            current_degrees = obj.val2deg(obj.getServoValues(), joints);
-			current_degrees = current_degrees(joints + 1);
-            goal_degrees = degrees + current_degrees;
-			obj.moveAbsoluteLinear(goal_degrees, joints, nStep);
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % FINISH IMPLEMENTING THIS FUNCTION            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end
         
         function obj = moveAbsoluteLinear(obj,degrees,joints,nStep)
@@ -270,12 +269,12 @@ classdef ArmRobot < handle
             values = obj.deg2val(degrees, joints);
             new_values = current_values;
             new_values(joints + 1) = values;
-            change = (new_values - current_values) / nStep;
+            change = (new_values - current_values) / 10;
             
             for n=1:nStep
-                obj.moveJoints(current_values + change, obj.allJoints);
-                current_values = obj.getServoValues();
+                obj.moveJoints(current_values, obj.allJoints);
             end
+            
             
 			obj.moveJoints(current_values, obj.allJoints);
 			%degrees = obj.val2deg(obj.getServoValues(), joints);

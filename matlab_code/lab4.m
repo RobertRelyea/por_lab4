@@ -9,15 +9,23 @@ robot.setLinkLengths([4.375 4.0625 .9375 11.87 12.18 6.25 5.625]);
 % Connect to the Robot
 robot.connect();
 
-display('Press Any Key to go to home position');
-%pause();
-
 % Step 0: Home
 home = [0 0 0 0 0 -10];
 joints = [0 1 2 3 4 5];
 robot.moveAbsolute(home, joints);
+pause(3);
+
+draw = [-90];
+joints = [0];
+robot.moveAbsoluteLinear(draw, joints, 30);
 pause(1);
 
+draw = [30];
+joints = [0];
+robot.moveRelativeLinear(draw, joints, 30);
+pause(1);
+
+%{
 % Step 1: Rotate shoulder -30
 draw = [-50];
 joints = [1];
@@ -66,6 +74,7 @@ robot.moveAbsolute(draw, joints);
 joints = [0 1 2 3 4 5];
 robot.moveAbsolute(home, joints);
 pause(1);
+%}
 
 % Close out the robot
 robot.delete();
