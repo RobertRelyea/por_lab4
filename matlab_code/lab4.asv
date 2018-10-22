@@ -47,12 +47,6 @@ joints = [3];
 robot.moveRelative(draw, joints);
 pause(.25);
 
-% Step 
-draw = [90];
-joints = [4];
-robot.moveRelative(draw, joints);
-pause(.25);
-
 % Step 1: Rotate shoulder -30
 draw = [-50];
 joints = [0];
@@ -66,6 +60,42 @@ robot.moveAbsolute(draw, joints);
 joints = [0 1 2 3 4 5];
 robot.moveAbsolute(home, joints);
 pause(1);
+
+% display('Press Any Key for Step 2');
+% pause();
+% 
+% % Step 2
+% display('Press Any Key for Step 3');
+% pause();
+% 
+% % Step 3
+% display('Press Any Key for Step 4');
+% pause();
+% 
+%  
+% % Step 4
+% display('Press Any Key for Step 5');
+% pause();
+%  
+% % Step 5
+% display('Press Any Key for Step 6');
+% pause();
+%  
+% % Step 6
+% display('Press Any Key to all steps absolute');
+% pause();
+% 
+% % Now Lets Try that All At Once (Absolute)
+% display('Press Any Key to all steps relative');
+% pause();
+% 
+% % Now Lets Try that All At Once (Relative)
+% display('Press Any Key to all steps relative linear');
+% pause();
+% 
+% % Now Lets Try that SMOOTHLY All At Once (Relative Linear)
+% display('Press Any Key to all steps absolute linear');
+% pause();
 
 % Close out the robot
 robot.delete();

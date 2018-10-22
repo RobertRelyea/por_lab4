@@ -216,9 +216,12 @@ classdef ArmRobot < handle
             %
             % @params degrees - the desired degree(s) to set.
             %         joints  - respective joint number(s) for degree(s).
+            current_values = obj.getServoValues();
             values = obj.deg2val(degrees, joints);
-			obj.moveJoints(values, joints);
-			degrees = obj.val2deg(obj.getServoValues(), joints);
+            current_values(joints + 1) = values;
+            
+			obj.moveJoints(current_values, obj.allJoints);
+			%degrees = obj.val2deg(obj.getServoValues(), joints);
             
         end
         
@@ -232,7 +235,8 @@ classdef ArmRobot < handle
             
             
             current_degrees = obj.val2deg(obj.getServoValues(), joints);
-			goal_degrees = degrees + current_degrees
+			current_degrees = current_degrees(joints + 1);
+            goal_degrees = degrees + current_degrees;
 			obj.moveAbsolute(goal_degrees, joints);
 
         end
@@ -246,9 +250,11 @@ classdef ArmRobot < handle
             %         joints  - respective joint number(s for degree(s).
             %         nStep   - the number of steps in linear motion. 
             
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % FINISH IMPLEMENTING THIS FUNCTION            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            current_degrees = obj.val2deg(obj.getServoValues(), joints);
+			current_degrees = current_degrees(joints + 1);
+            goal_degrees = degrees + current_degrees;
+			obj.moveAbsolute(goal_degrees, joints);
         end
         
         function obj = moveAbsoluteLinear(obj,degrees,joints,nStep)
